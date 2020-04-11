@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_favorite"
+            android:visible="true"
+            android:title="♡お気に入り"
+            />
+        <item
             android:id="@+id/nav_hobby"
             android:title="趣味"
             />
@@ -18,11 +23,7 @@
             android:id="@+id/nav_computer"
             android:title="コンピューター"
             />
-        <item
-            android:id="@+id/nav_favorite"
-            android:visible="true"
-            android:title="☆お気に入り"
-           />
+
     </group>
 
 </menu>

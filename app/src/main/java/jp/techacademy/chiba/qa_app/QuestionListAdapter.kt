@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import android.util.Log
 
 import java.util.ArrayList
 
@@ -18,11 +19,11 @@ class QuestionListAdapter(context: Context) : BaseAdapter() {
 
     init {
         mLayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
     }
 
     override fun getCount(): Int{
         return mQuestionArrayList.size
+
     }
 
     override fun getItem(position: Int): Any{
@@ -48,6 +49,7 @@ class QuestionListAdapter(context: Context) : BaseAdapter() {
 
         val resText = convertView.findViewById<View>(R.id.resTextView) as TextView
         val resNum = mQuestionArrayList[position].answers.size
+        Log.d("test","答え；" + resNum.toString())
         resText.text = resNum.toString()
 
         val bytes = mQuestionArrayList[position].imageBytes

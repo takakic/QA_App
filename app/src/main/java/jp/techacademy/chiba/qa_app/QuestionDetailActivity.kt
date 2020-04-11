@@ -69,6 +69,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                 mFavoriteFlag = true
             }else{
                 favoriteButton.setImageResource(R.drawable.heart_button_unselected)
+                mFavoriteFlag = false
             }
         }
 
@@ -82,6 +83,7 @@ class QuestionDetailActivity : AppCompatActivity() {
                 mFavoriteFlag = true
             }else{
                 favoriteButton.setImageResource(R.drawable.heart_button_unselected)
+                mFavoriteFlag = false
             }
 
         }
@@ -130,13 +132,10 @@ class QuestionDetailActivity : AppCompatActivity() {
             //Firebaseのfavoritesから、questionIDにいき、favoriteの中身を確認する
             val databaseReference = FirebaseDatabase.getInstance().reference
 
-            Log.d("testtest","DBひらいた")
-
             val favoriteRef = databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
             Log.d("testtest","favoriteEventlistenerに飛ばす")
             favoriteRef.addChildEventListener(favoriteEventListener)
 
-            Log.d("testtest", "questionuid; " + favoriteRef.toString())
 
         }
 
@@ -197,8 +196,6 @@ class QuestionDetailActivity : AppCompatActivity() {
 
                 }
 
-
-                // mfavorite の 値で、追加処理も切り分ける
             }
 
         }

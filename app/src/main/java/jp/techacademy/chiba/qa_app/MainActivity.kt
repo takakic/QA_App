@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var mGenreRef: DatabaseReference? = null
 
+
     private val mEventListener = object : ChildEventListener{
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?){
             val map = dataSnapshot.value as Map<String, String>
@@ -62,7 +63,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "", mGenre, bytes, answerArrayList)
+            Log.d("test", "MAのquestionインスタンス；" + question.toString())
             mQuestionArrayList.add(question)
+            Log.d("test", "MAのmQuestionArray；" + mQuestionArrayList.toString())
             mAdapter.notifyDataSetChanged()
         }
 
@@ -176,8 +179,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         //1:趣味を規定の選択とする
         if(mGenre == 0){
-            onNavigationItemSelected(navigationView.menu.getItem(0))
+            onNavigationItemSelected(navigationView.menu.getItem(1))
         }
+
 
         //ログインしていなければお気に入りを消す処理
         //ログイン済みのユーザーを取得する
@@ -229,10 +233,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenre = 4
         }else if (id == R.id.nav_favorite){
             //課題で追加
-            mToolbar.title = "☆お気に入り"
-            mGenre = 5
+            //intentでfavoritesActivityに飛ばす
+            val intent = Intent(applicationContext, FavoritesActivity::class.java)
+            startActivity(intent)
+            return true
         }
-
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         drawer.closeDrawer(GravityCompat.START)
@@ -247,6 +252,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenreRef!!.removeEventListener(mEventListener)
         }
         mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
+        Log.d("test", "mGenreRef: " + mGenreRef.toString())
+
         mGenreRef!!.addChildEventListener(mEventListener)
 
 
