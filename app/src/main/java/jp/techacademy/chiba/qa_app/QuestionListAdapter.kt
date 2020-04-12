@@ -49,7 +49,6 @@ class QuestionListAdapter(context: Context) : BaseAdapter() {
 
         val resText = convertView.findViewById<View>(R.id.resTextView) as TextView
         val resNum = mQuestionArrayList[position].answers.size
-        Log.d("test","答え；" + resNum.toString())
         resText.text = resNum.toString()
 
         val bytes = mQuestionArrayList[position].imageBytes

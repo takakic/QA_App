@@ -62,7 +62,6 @@ class QuestionDetailActivity : AppCompatActivity() {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val data = HashMap<String, String>()
             data["mGenre"] = mQuestion.genre.toString()
-            Log.d("testtest", "mapです；" + data["mGenre"].toString())
 
             if(data["mGenre"] != null){
                 favoriteButton.setImageResource(R.drawable.heart_button_selected)
@@ -76,7 +75,6 @@ class QuestionDetailActivity : AppCompatActivity() {
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
             val data = HashMap<String, String>()
             data["mGenre"] = mQuestion.genre.toString()
-            Log.d("testtest", "mapです；" + data["mGenre"].toString())
 
             if(data["mGenre"] != null){
                 favoriteButton.setImageResource(R.drawable.heart_button_selected)
@@ -99,10 +97,7 @@ class QuestionDetailActivity : AppCompatActivity() {
         override fun onCancelled(databaseError: DatabaseError) {
 
         }
-
-
-
-        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,8 +106,6 @@ class QuestionDetailActivity : AppCompatActivity() {
         //渡ってきたquestionのオブジェクトを保持する
         val extras = intent.extras
         mQuestion = extras.get("question") as Question
-
-        Log.d("testtest", "Question; " + mQuestion.toString())
 
         title = mQuestion.title
 
@@ -133,10 +126,7 @@ class QuestionDetailActivity : AppCompatActivity() {
             val databaseReference = FirebaseDatabase.getInstance().reference
 
             val favoriteRef = databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
-            Log.d("testtest","favoriteEventlistenerに飛ばす")
             favoriteRef.addChildEventListener(favoriteEventListener)
-
-
         }
 
         fab.setOnClickListener{
@@ -146,66 +136,40 @@ class QuestionDetailActivity : AppCompatActivity() {
             if (user == null){
                 //ログインしていなければログイン画面に遷移する
                 val intent = Intent(applicationContext, LoginActivity::class.java)
-                Log.d("testtest", "ログインしていないことになっている")
                 startActivity(intent)
             }else{
                 //Questionを渡して回答作成画面を起動する
                 val intent = Intent(applicationContext, AnswerSendActivity::class.java)
                 intent.putExtra("question", mQuestion)
-                Log.d("testtest", "ログインはした")
                 startActivity(intent)
             }
+
+            val dataBaseReference = FirebaseDatabase.getInstance().reference
+            mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
+            mAnswerRef.addChildEventListener(mEventListener)
+
         }
 
         favoriteButton.setOnClickListener{
             //課題、お気に入りボタンを押したときのアクション
             val user = FirebaseAuth.getInstance().currentUser
 
+            val databaseReference = FirebaseDatabase.getInstance().reference
+            val favoriteRef = databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
+            val data = HashMap<String, String>()
+
             //お気に入り登録されているか確認
-            Log.d("testtest", "お気に入り呉一句直後")
-
-            if (user == null){
-                //ログインしていなければログイン画面に遷移する
-                val intent = Intent(applicationContext, LoginActivity::class.java)
-                Log.d("testtest", "ログインしていないことになっている")
-                startActivity(intent)
-            }else{
-                // mFavoriteのtrueかFalseかで処理訳
-                Log.d("testtest", "ログインされてた判断")
-               //お気に入り対象に追加する。db呼び出して、登録する
-
-                val databaseReference = FirebaseDatabase.getInstance().reference
-                val favoriteRef = databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid)
-                val data = HashMap<String, String>()
-
-                if(mFavoriteFlag == false){
-
+            if(mFavoriteFlag == false){ //お気に入り対象に追加する。db呼び出して、登録する
                 data["mGenre"] = mQuestion.genre.toString()
-
                 favoriteRef.setValue(data) //決まった値であれば、setValue(data) push()は自動でIDで付与
                     mFavoriteFlag = true
-                    Log.d("testtest", "お気に入りに追加")
-
-                }else{
-                    //データ解除　
-                    databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid).removeValue()
-                    Log.d("testtest", "お気に入りから削除")
-                    //val data = HashMap<String, String>()
-                    mFavoriteFlag = false
-                    favoriteButton.setImageResource(R.drawable.heart_button_unselected)
-
-                }
+            }else{
+                //データ解除　
+                databaseReference.child(FavoritePATH).child(user!!.uid).child(mQuestion.questionUid).removeValue()
+                mFavoriteFlag = false
+                favoriteButton.setImageResource(R.drawable.heart_button_unselected)
 
             }
-
         }
-
-        val dataBaseReference = FirebaseDatabase.getInstance().reference
-        mAnswerRef = dataBaseReference.child(ContentsPATH).child(mQuestion.genre.toString()).child(mQuestion.questionUid).child(AnswersPATH)
-        mAnswerRef.addChildEventListener(mEventListener)
     }
-
-
-
-
 }

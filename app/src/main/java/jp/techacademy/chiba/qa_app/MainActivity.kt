@@ -61,11 +61,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     answerArrayList.add(answer)
                 }
             }
-
             val question = Question(title, body, name, uid, dataSnapshot.key ?: "", mGenre, bytes, answerArrayList)
-            Log.d("test", "MAのquestionインスタンス；" + question.toString())
             mQuestionArrayList.add(question)
-            Log.d("test", "MAのmQuestionArray；" + mQuestionArrayList.toString())
             mAdapter.notifyDataSetChanged()
         }
 
@@ -88,7 +85,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             question.answers.add(answer)
                         }
                     }
-
                     mAdapter.notifyDataSetChanged()
                 }
             }
@@ -182,7 +178,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             onNavigationItemSelected(navigationView.menu.getItem(1))
         }
 
-
         //ログインしていなければお気に入りを消す処理
         //ログイン済みのユーザーを取得する
         val user = FirebaseAuth.getInstance().currentUser
@@ -198,7 +193,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-
         return true
     }
 
@@ -232,7 +226,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mToolbar.title = "コンピューター"
             mGenre = 4
         }else if (id == R.id.nav_favorite){
-            //課題で追加
             //intentでfavoritesActivityに飛ばす
             val intent = Intent(applicationContext, FavoritesActivity::class.java)
             startActivity(intent)
@@ -252,10 +245,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mGenreRef!!.removeEventListener(mEventListener)
         }
         mGenreRef = mDatabaseReference.child(ContentsPATH).child(mGenre.toString())
-        Log.d("test", "mGenreRef: " + mGenreRef.toString())
-
         mGenreRef!!.addChildEventListener(mEventListener)
-
 
         return true
     }

@@ -14,8 +14,8 @@ class FavoritesActivity : AppCompatActivity() {
     private lateinit var mToolbar: Toolbar
     private var mFavRef: DatabaseReference? = null
     private lateinit var mDatabaseReference: DatabaseReference
-    private lateinit var mFQuestionArrayList: ArrayList<Question>
-    private lateinit var mAdapter: FavoritesListAdapter
+    private lateinit var mQuestionArrayList: ArrayList<Question>
+    private lateinit var mAdapter: QuestionListAdapter
     private lateinit var mListView: ListView
 
     private val mEventListener = object : ChildEventListener {
@@ -25,7 +25,7 @@ class FavoritesActivity : AppCompatActivity() {
             val genre = Integer.parseInt(map["mGenre"])
             val questionUid = dataSnapshot.key
 
-            val ref = databaseReference.child(ContentsPATH).child(genre!!.toString()).child(questionUid!!.toString())
+            val ref = databaseReference.child(ContentsPATH).child(genre.toString()).child(questionUid!!.toString())
 
             ref.addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot){
@@ -43,7 +43,7 @@ class FavoritesActivity : AppCompatActivity() {
                         }
 
                     val answerArrayList = ArrayList<Answer>()
-                    val answerMap = map["answers"] as Map<String, String>?
+                    val answerMap = data["answers"] as Map<String, String>?
                     if(answerMap != null){
                         for(key in answerMap.keys){
                             val temp = answerMap[key] as Map<String, String>
@@ -56,11 +56,8 @@ class FavoritesActivity : AppCompatActivity() {
                     }
 
                     val question = Question(title, body, name, uid, snapshot.key ?: "", genre, bytes, answerArrayList)
-                    //Log.d("test", "question のインスタンス創った；" + question.toString())
-                    mFQuestionArrayList.add(question)
-                    Log.d("test", "mFQuestionArray；" + mFQuestionArrayList.toString())
+                    mQuestionArrayList.add(question)
                     mAdapter.notifyDataSetChanged()
-                    Log.d("test", "notgydatasetchangeした")
 
                 }
                 override fun onCancelled(firebaseError: DatabaseError){}
@@ -85,39 +82,39 @@ class FavoritesActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_favorites)
-
-        title = "♡お気に入り"
+    override fun onResume() {
+        super.onResume()
         //Firebase
         mDatabaseReference = FirebaseDatabase.getInstance().reference
 
-        //Listviewの準備
-        mListView = findViewById(R.id.listView)
-        mAdapter = FavoritesListAdapter(this)
-        mFQuestionArrayList = ArrayList<Question>()
-
-        mAdapter.setFQuestionArrayList(mFQuestionArrayList)
-        Log.d("test", "setした")
+        mQuestionArrayList.clear()
+        mAdapter.setQuestionArrayList(mQuestionArrayList)
         mListView.adapter = mAdapter
-
 
         val mUser = FirebaseAuth.getInstance().currentUser
 
         mFavRef = mDatabaseReference.child(FavoritePATH).child(mUser!!.uid)
         mFavRef!!.addChildEventListener(mEventListener)
 
+    }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_favorites)
+
+        title = "♡お気に入り"
+
+        //Listviewの準備
+        mListView = findViewById(R.id.listView)
+        mAdapter = QuestionListAdapter(this)
+        mQuestionArrayList = ArrayList<Question>()
+
+        //Questionのインスタンスを渡して質問詳細画面を起動する
         mListView.setOnItemClickListener{ parent, view, position, id ->
-            //Questionのインスタンスを渡して質問詳細画面を起動する
             val intent = Intent(applicationContext, QuestionDetailActivity::class.java)
-            intent.putExtra("question", mFQuestionArrayList[position])
+            intent.putExtra("question", mQuestionArrayList[position])
             startActivity(intent)
         }
-
-
-
     }
 }
